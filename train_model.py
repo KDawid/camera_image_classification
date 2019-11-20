@@ -12,12 +12,10 @@ predictions = model.predict(x_train)
 print([x.index(max(x)) for x in predictions.tolist()])
 print([y.index(max(y)) for y in y_train.tolist()])
 print()
+print(collector.label_dict)
+
 prediction_list = [collector.label_dict[x.index(max(x))] for x in predictions.tolist()]
 actual_list = [collector.label_dict[y.index(max(y))] for y in y_train.tolist()]
-print(prediction_list)
-print(actual_list)
-print()
-print(collector.label_dict)
 
 matrix = ConfusionMatrix(prediction_list, actual_list)
 matrix.create_graph()
