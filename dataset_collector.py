@@ -1,29 +1,36 @@
 import argparse
 from keras.preprocessing.image import img_to_array, load_img
+from keras.utils import to_categorical
 import numpy as np
 import os
 import tensorflow as tf
 
+class DatasetCollector:
+    def __init__(self):
+        self.label_dict = dict()
 
-def get_data(data_folder, target_size):
-    image_list = []
-    label_list = []
+    def get_data(self, data_folder, target_size):
+        image_list = []
+        label_list = []
 
-    i = 0
-    for folder_name in os.listdir(data_folder):
-        for filename in os.listdir(os.path.join(data_folder, folder_name)):
-            img = load_img(os.path.join(data_folder, folder_name, filename),
-                           target_size=target_size)
-            img_array = img_to_array(img)
-            image_list.append(img_array)
-            label_list.append(folder_name)
-            i += 1
-            if i % 1000 == 0:
-                print(i)
+        i = 0
+        label = 0
+        for folder_name in os.listdir(data_folder):
+            for filename in os.listdir(os.path.join(data_folder, folder_name)):
+                img = load_img(os.path.join(data_folder, folder_name, filename),
+                               target_size=target_size)
+                img_array = img_to_array(img)
+                image_list.append(img_array)
+                label_list.append(label)
+                i += 1
+                if i % 1000 == 0:
+                    print(i)
+            self.label_dict[label] = folder_name
+            label += 1
 
-    images = tf.Session().run(tf.random_shuffle(np.array(image_list), seed=8))
-    labels = tf.Session().run(tf.random_shuffle(np.array(label_list), seed=8))
-    return images/255, labels
+        images = tf.Session().run(tf.random_shuffle(np.array(image_list), seed=8))
+        labels = tf.Session().run(tf.random_shuffle(np.array(label_list), seed=8))
+        return images/255, to_categorical(labels)
 
 
 def create_argparser():
@@ -37,4 +44,6 @@ if __name__ == '__main__':
     parser = create_argparser()
     args = parser.parse_args()
     size = tuple([int(i) for i in args.size.split(',')])
-    data, labels = get_data(args.data_dir, size)
+
+    collector = DatasetCollector
+    data, labels = collector.get_data(args.data_dir, size)
