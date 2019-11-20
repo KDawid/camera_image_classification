@@ -39,12 +39,12 @@ def generate_data(directory, target_folder, target_size, limit):
             i += 1
             if i % 1000 == 0:
                 print(f'{folder_name}: {i}')
-            if i > limit:
+            if i >= limit:
                 break
 
 
 def create_argparser():
-    parser = argparse.ArgumentParser(description='Traiing set generator')
+    parser = argparse.ArgumentParser(description='Training set generator')
     parser.add_argument('-d', '--data_dir', required=True, help='Source folder')
     parser.add_argument('-t', '--target_dir', required=True, help='Target dir')
     parser.add_argument('-s', '--size', default='150,150', help='Target image size')
