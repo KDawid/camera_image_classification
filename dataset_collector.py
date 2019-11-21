@@ -5,6 +5,7 @@ import numpy as np
 import os
 import tensorflow as tf
 
+
 class DatasetCollector:
     def __init__(self):
         self.label_dict = dict()

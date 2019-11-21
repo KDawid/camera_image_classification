@@ -6,12 +6,12 @@ import os
 
 
 def get_images(directory, target_size):
-  result = []
-  for filename in os.listdir(directory):
-    img = load_img(os.path.join(directory, filename), target_size=target_size)
-    img_array = img_to_array(img)
-    result.append(img_array)
-  return np.array(result)
+    result = []
+    for filename in os.listdir(directory):
+        img = load_img(os.path.join(directory, filename), target_size=target_size)
+        img_array = img_to_array(img)
+        result.append(img_array)
+    return np.array(result)
 
 def create_datagen():
     return ImageDataGenerator(
