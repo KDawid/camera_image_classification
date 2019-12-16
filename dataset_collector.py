@@ -7,18 +7,19 @@ import tensorflow as tf
 
 
 class DatasetCollector:
-    def __init__(self):
-        self.label_dict = dict()
+    def __init__(self, data_folder):
+        self.data_folder = data_folder
+        self.label_dict = None
 
-    def get_data(self, data_folder, target_size):
+    def get_data(self, target_size):
         image_list = []
         label_list = []
 
         i = 0
         label = 0
-        for folder_name in os.listdir(data_folder):
-            for filename in os.listdir(os.path.join(data_folder, folder_name)):
-                img = load_img(os.path.join(data_folder, folder_name, filename),
+        for folder_name in os.listdir(self.data_folder):
+            for filename in os.listdir(os.path.join(self.data_folder, folder_name)):
+                img = load_img(os.path.join(self.data_folder, folder_name, filename),
                                target_size=target_size)
                 img_array = img_to_array(img)
                 image_list.append(img_array)
@@ -26,13 +27,23 @@ class DatasetCollector:
                 i += 1
                 if i % 1000 == 0:
                     print(i)
-            self.label_dict[label] = folder_name
             label += 1
 
         images = tf.Session().run(tf.random_shuffle(np.array(image_list), seed=8))
         labels = tf.Session().run(tf.random_shuffle(np.array(label_list), seed=8))
         return images/255, to_categorical(labels)
 
+    def get_labels_num(self):
+        return len(os.listdir(self.data_folder))
+
+    def get_label_dict(self):
+        if not self.label_dict:
+            self.label_dict = dict()
+            label = 0
+            for folder_name in os.listdir(self.data_folder):
+                self.label_dict[label] = folder_name
+                label += 1
+        return self.label_dict
 
 def create_argparser():
     parser = argparse.ArgumentParser(description='Dataset collector')

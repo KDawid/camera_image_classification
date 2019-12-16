@@ -1,24 +1,27 @@
-from confusion_matrix import ConfusionMatrix
 from dataset_collector import DatasetCollector
 import lenet
 
-collector = DatasetCollector()
-x_train, y_train = collector.get_data('training', (50, 50))
-model = lenet.get_model(len(y_train[0]), (50, 50, 3))
 
-# model.load_weights('weights.model')
-history = model.fit(x_train, y_train, epochs=3, batch_size=128)
+class ModelTrainer:
+    def __init__(self, training_set_folder):
+        self.collector = DatasetCollector(training_set_folder)
+        self.label_dict = self.collector.get_label_dict()
+        self.labels_num = self.collector.get_labels_num()
+        self.model = lenet.get_model(self.labels_num, (50, 50, 3))
+        self.history = None
 
-predictions = model.predict(x_train)
-print([x.index(max(x)) for x in predictions.tolist()])
-print([y.index(max(y)) for y in y_train.tolist()])
-print()
-print(collector.label_dict)
+    def train(self, epochs=1):
+        x_train, y_train = self.collector.get_data((50, 50))
+        self.history = self.model.fit(x_train, y_train, epochs=epochs, batch_size=128)
 
-prediction_list = [collector.label_dict[x.index(max(x))] for x in predictions.tolist()]
-actual_list = [collector.label_dict[y.index(max(y))] for y in y_train.tolist()]
+    def load_weights(self, file_path='model.h5'):
+        self.model.load_weights(file_path)
 
-matrix = ConfusionMatrix(prediction_list, actual_list)
-matrix.create_graph()
+    def save_weights(self, file_path='model.h5'):
+        self.model.save_weights(file_path)
 
-model.save_weights('weights.model')
+    def get_model(self):
+        return self.model
+
+    def get_label_dict(self):
+        return self.label_dict
