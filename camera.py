@@ -3,10 +3,14 @@ import picamera.array
 import pygame
 import pygame.camera
 from pygame.locals import *
+from skimage.transform import resize
 from time import sleep
 
 
 class Camera:
+    def __init__(self, img_size=(150, 150)):
+        self.img_size = img_size
+
     def save_image(self, path):
         raise NotImplementedError
 
@@ -17,6 +21,7 @@ class Camera:
 class PiCamera(Camera):
     def __init__(self, img_size=(150, 150)):
         print('Starting RPI camera...')
+        Camera.__init__(self, img_size)
         self.camera = picamera.PiCamera()
         self.camera.resolution = img_size
         self.camera.start_preview()
@@ -40,6 +45,7 @@ class PiCamera(Camera):
 class UsbCamera:
     def __init__(self, img_size=(150, 150)):
         print('Starting USB camera...')
+        Camera.__init__(self, img_size)
         pygame.init()
         pygame.camera.init()
         self.camera = pygame.camera.Camera("/dev/video0", img_size)
@@ -53,8 +59,9 @@ class UsbCamera:
         pygame.image.save(image, path)
 
     def get_img_array(self):
-        img = self.camera.get_image()
-        return pygame.surfarray.array3d(img)
+        image = self.camera.get_image()
+        img_array = pygame.surfarray.array3d(image)
+        return resize(img_array, self.img_size)
 
     def __del__(self):
         self.camera.stop()
