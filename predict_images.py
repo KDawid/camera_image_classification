@@ -3,6 +3,7 @@ from camera import UsbCamera
 import numpy as np
 from train_model import ModelTrainer
 from datetime import datetime
+import os
 import time
 
 
@@ -10,8 +11,9 @@ class ImagePredictor:
     def __init__(self, training_path):
         self.camera = UsbCamera(img_size=(50, 50))
         trainer = ModelTrainer(training_path)
-        # trainer.train(epochs=5)
-        # trainer.save_weights('model.h5')
+        if not os.path.exists('model.h5'):
+                trainer.train(epochs=5)
+                trainer.save_weights('model.h5')
         trainer.load_weights('model.h5')
         self.model = trainer.get_model()
         self.label_dict = trainer.get_label_dict()

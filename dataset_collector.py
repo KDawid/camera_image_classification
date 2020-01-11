@@ -3,7 +3,6 @@ from keras.preprocessing.image import img_to_array, load_img
 from keras.utils import to_categorical
 import numpy as np
 import os
-import tensorflow as tf
 
 
 class DatasetCollector:
@@ -29,8 +28,11 @@ class DatasetCollector:
                     print(i)
             label += 1
 
-        images = tf.Session().run(tf.random_shuffle(np.array(image_list), seed=8))
-        labels = tf.Session().run(tf.random_shuffle(np.array(label_list), seed=8))
+        images = np.array(image_list)
+        labels = np.array(label_list)
+        np.random.seed(8)
+        np.random.shuffle(images)
+        np.random.shuffle(labels)
         return images/255, to_categorical(labels)
 
     def get_labels_num(self):
