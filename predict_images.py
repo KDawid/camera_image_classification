@@ -11,8 +11,8 @@ import time
 
 class ImagePredictor:
     def __init__(self, training_path, predictions_dir=None):
-        self.camera = UsbCamera(img_size=(50, 50))
-        # self.camera = PiCamera(img_size=(50, 50))
+        # self.camera = UsbCamera(img_size=(50, 50))
+        self.camera = PiCamera(img_size=(50, 50))
         trainer = ModelTrainer(training_path)
         if not os.path.exists('model.h5'):
                 trainer.train(epochs=5)
@@ -39,7 +39,7 @@ class ImagePredictor:
 
     def __save_img(self, img_array, label):
         now = datetime.now()
-        dt_str = now.strftime(f'%d-%m-%Y_%H-%M-%S')
+        dt_str = now.strftime(f'%Y-%m-%d_%H-%M-%S')
         file_name = f'{dt_str}_{label}.png'
         print(f'Save file: {file_name} to folder {self.folder}')
         img = Image.fromarray(img_array)
