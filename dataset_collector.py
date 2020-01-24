@@ -3,6 +3,7 @@ from keras.preprocessing.image import img_to_array, load_img
 from keras.utils import to_categorical
 import numpy as np
 import os
+from sklearn.utils import shuffle
 
 
 class DatasetCollector:
@@ -30,9 +31,7 @@ class DatasetCollector:
 
         images = np.array(image_list)
         labels = np.array(label_list)
-        np.random.seed(8)
-        np.random.shuffle(images)
-        np.random.shuffle(labels)
+        images, labels = shuffle(images, labels)
         return images/255, to_categorical(labels)
 
     def get_labels_num(self):
