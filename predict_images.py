@@ -3,6 +3,7 @@ from camera import UsbCamera
 from datetime import datetime
 import numpy as np
 from PIL import Image
+from skimage.transform import resize
 from train_model import ModelTrainer
 from datetime import datetime
 import os
@@ -27,6 +28,18 @@ class ImagePredictor:
 
     def predict_image(self, save=False):
         img = self.camera.get_img_array()
+        prediction = self.model.predict(np.array([img]))[0]
+        # print(predictions)
+        label = np.argmax(prediction)
+        # print(label)
+        if save:
+            if not self.folder:
+                raise ValueError('Please set folder name where to save the pictures!')
+            self.__save_img(img, self.label_dict[label])
+        return self.label_dict[label]
+
+    def predict(self, image, save=False):
+        img = resize(image, (50, 50))
         prediction = self.model.predict(np.array([img]))[0]
         # print(predictions)
         label = np.argmax(prediction)

@@ -27,12 +27,30 @@ def index():
     return "Hello, World!"
 
 
-@app.route('/predict')
+@app.route('/predict', methods=['GET'])
 def predict():
     with graph.as_default():
         with session.as_default():
             prediction = predictor.predict_image()
     result = {"prediction": prediction}
+    return jsonify(result)
+
+
+@app.route('/predict', methods=['POST'])
+def predict_image():
+    data = request.get_json()
+    img = np.array(data)
+    with graph.as_default():
+        with session.as_default():
+            prediction = predictor.predict(img)
+    result = {"prediction": prediction}
+    return jsonify(result)
+
+
+@app.route('/image')
+def get_image():
+    img = predictor.camera.get_img_array()
+    result = {"image": img.tolist()}
     return jsonify(result)
 
 

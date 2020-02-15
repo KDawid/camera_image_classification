@@ -67,6 +67,7 @@ class UsbCamera:
         self.camera.stop()
         print('Camera has stopped')
 
+
 if __name__ == '__main__':
     c = UsbCamera((500, 500))
     # c = PiCamera((500, 500))
